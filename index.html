@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#005CA9">
+    <meta name="description" content="Portal de acesso às plataformas educacionais do Colégio Vicente Rijo">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Vicente Rijo">
+    <title>Portal do Aluno Vicente Rijo</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/images/icons/icon-192x192.png">
+    <link rel="stylesheet" href="assets/css/style.css?v=2">
+    <link rel="stylesheet" href="assets/css/splash.css?v=2">
+    <link rel="icon" href="assets/images/icons/icon-192x192.png">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+            document.documentElement.setAttribute('data-theme', initialTheme);
+
+        })();
+    </script>
+    <script src="assets/js/splash.js?v=2" defer></script>
+    <script src="assets/js/app.js?v=2" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-main">
+                <img src="assets/images/logos/logo.png" alt="Logo do Colégio Vicente Rijo" class="logo">
+                <div class="header-title-group">
+                    <h1>Portal do Aluno</h1>
+                    <span class="school-name">Vicente Rijo</span>
+                </div>
+            </div>
+            <div class="header-controls">
+                <form class="search-form" action="https://www.google.com/search" method="get" target="_blank">
+                    <input class="search-input" type="text" name="q" placeholder="Buscar no Google..." aria-label="Buscar no Google">
+                    <button class="search-button" type="submit">
+                        <img src="assets/images/icons/search.svg" alt="Buscar">
+                    </button>
+                </form>
+                <button id="toggle-theme" aria-label="Alternar modo claro/escuro">🌙</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="platforms-section">
+                <h2 class="section-title">Plataformas Educacionais</h2>
+                <div class="cards-grid">
+                    <!-- Google Classroom -->
+                    <div class="card" data-platform="Google Classroom" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/classroom.png" alt="Google Classroom" class="card-logo">
+                        <h3 class="card-title">Classroom</h3>
+                        <a href="https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fclassroom.google.com&passive=true" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Redação PR -->
+                    <div class="card" data-platform="Redação PR" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/redacao.png" alt="Redação PR" class="card-logo">
+                        <h3 class="card-title">Redação PR</h3>
+                        <a href="https://redacao.pr.gov.br/login" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Leia Paraná -->
+                    <div class="card" data-platform="Leia Paraná" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/leia.png" alt="Leia Paraná" class="card-logo">
+                        <h3 class="card-title">Leia Paraná</h3>
+                        <a href="https://leiaparana.odilo.us/" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Matific -->
+                    <div class="card" data-platform="Matific" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/matific.png" alt="Matific" class="card-logo">
+                        <h3 class="card-title">Matific</h3>
+                        <a href="https://www.matific.com/bra/pt-br/login-page/" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Khan Academy -->
+                    <div class="card" data-platform="Khan Academy" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/khanacademy.png" alt="Khan Academy" class="card-logo">
+                        <h3 class="card-title">Khan Academy</h3>
+                        <a href="https://pt.khanacademy.org/login" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Quizizz -->
+                    <div class="card" data-platform="Quizizz" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/quizizz.png" alt="Quizizz" class="card-logo">
+                        <h3 class="card-title">Quizizz</h3>
+                        <a href="https://quizizz.com/login?source=top_nav_login_button&ctaSource=top_nav_login_button&ref=header_tab&webflow_referrer=webflow&lng=pt-BR&fromPage=/" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Inglês Paraná Teens -->
+                    <div class="card" data-platform="Inglês Paraná Teens" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/inglesparanateens.png" alt="Inglês Paraná Teens" class="card-logo">
+                        <h3 class="card-title">Inglês PR Teens</h3>
+                        <a href="https://pt.englishcentral.com/partner/parana" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Inglês Paraná High -->
+                    <div class="card" data-platform="Inglês Paraná high" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/inglesparanahigh.png" alt="Inglês Paraná high" class="card-logo">
+                        <h3 class="card-title">Inglês PR High</h3>
+                        <a href="http://inglesparana.learn.corporate.ef.com/" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Alura EduTech -->
+                    <div class="card" data-platform="Alura" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/alura.png" alt="Alura EduTech" class="card-logo">
+                        <h3 class="card-title">Alura EduTech</h3>
+                        <a href="https://cursos.alura.com.br/edutech" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Mblock -->
+                    <div class="card" data-platform="Mblock" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/mblock.png" alt="Mblock ide" class="card-logo">
+                        <h3 class="card-title">Mblock</h3>
+                        <a href="https://ide.mblock.cc/" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Área do Aluno -->
+                    <div class="card" data-platform="Aluno" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/areadoaluno.png" alt="Área do aluno" class="card-logo">
+                        <h3 class="card-title">Área do aluno</h3>
+                        <a href="https://www.areadoaluno.seed.pr.gov.br/servicosaoaluno/pages/publico/login.jsf?dswid=595" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- Área do Aluno VR -->
+                    <div class="card" data-platform="Aluno VR" onclick="trackLinkClick(this)">
+                        <img src="/assets/images/logos/logo.webp" alt="Área do aluno" class="card-logo">
+                        <h3 class="card-title">Informações VR</h3>
+                        <a href="https://sites.google.com/escola.pr.gov.br/vicenterijoescolaonline/in%C3%ADcio" target="_blank" class="card-link"></a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 &bull; feito com <span class="heart">❤</span> <a href="http://profbt.vercel.app" target="_blank" rel="noopener">Prof Bruno Carvalho</a></p>
+            <p class="footer-copy">Colégio Vicente Rijo. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').then(function(registration) {
+          console.log('ServiceWorker registrado com sucesso:', registration.scope);
+        }, function(err) {
+          console.log('Falha ao registrar o ServiceWorker:', err);
+        });
+      });
+    }
+    </script>
+</body>
+
+</html>
+<!-- Botão de status online/offline -->
+<button id="network-status-indicator" aria-label="Status da rede">Status</button>
