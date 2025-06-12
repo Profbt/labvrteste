@@ -677,3 +677,142 @@ h1 {
     background-color: rgba(255, 255, 255, 0.15);
     border-color: var(--text-dark);
 }
+
+/* ========================================= */
+/* Estilos para o Modal de Atualização (PWA) */
+/* ========================================= */
+.update-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Acima de todos os outros elementos */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.update-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.update-modal-container {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 90%;
+    width: 450px;
+    box-shadow: var(--card-shadow);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.update-modal-overlay.active .update-modal-container {
+    transform: translateY(0);
+}
+
+.update-modal-title {
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.update-modal-message {
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.update-modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.update-modal-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    min-width: 150px;
+}
+
+.update-modal-button.primary {
+    background: var(--pr-blue);
+    color: var(--white);
+}
+
+.update-modal-button.primary:hover {
+    background: var(--pr-green);
+    transform: translateY(-2px);
+}
+
+.update-modal-button.primary:active {
+    transform: translateY(0);
+}
+
+.update-modal-button.secondary {
+    background: var(--gray-medium);
+    color: var(--text-dark);
+}
+
+.update-modal-button.secondary:hover {
+    background: #c5c5c5;
+    transform: translateY(-2px);
+}
+
+.update-modal-button.secondary:active {
+    transform: translateY(0);
+}
+
+/* Dark mode para o modal */
+[data-theme="dark"] .update-modal-container {
+    background: #2C2C2C;
+    border: 1px solid #444444;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+[data-theme="dark"] .update-modal-title,
+[data-theme="dark"] .update-modal-message {
+    color: #FFFFFF;
+}
+[data-theme="dark"] .update-modal-button.secondary {
+    background: #555555;
+    color: #FFFFFF;
+}
+[data-theme="dark"] .update-modal-button.secondary:hover {
+    background: #666666;
+}
+
+/* Responsividade do modal */
+@media (max-width: 480px) {
+    .update-modal-container {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    .update-modal-title {
+        font-size: 1.5rem;
+    }
+    .update-modal-message {
+        font-size: 0.9rem;
+    }
+    .update-modal-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    .update-modal-button {
+        width: 100%;
+        min-width: unset;
+    }
+}

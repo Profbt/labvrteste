@@ -1,6 +1,7 @@
-const CACHE_NAME = 'portal-vicente-rijo-v3';
-const STATIC_CACHE = 'static-v3';
-const DYNAMIC_CACHE = 'dynamic-v3';
+// Cache do Service Worker muda versão para atualizar o app.
+const CACHE_NAME = 'portal-vicente-rijo-v5';
+const STATIC_CACHE = 'static-v5';
+const DYNAMIC_CACHE = 'dynamic-v5';
 
 // Arquivos que devem ser cacheados imediatamente
 const STATIC_ASSETS = [
@@ -109,4 +110,11 @@ self.addEventListener('fetch', event => {
           });
       })
   );
+});
+
+// Listener para mensagens do cliente (app.js)
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 }); 

@@ -20,10 +20,13 @@ function initializeTheme() {
 function updateInstallButtonVisibility() {
     const installButton = document.getElementById('install-button');
     if (installButton) {
-        if (window.innerWidth <= 768) {
-            installButton.style.display = 'inline-block';
+        // Verifica se está em modo standalone (PWA instalado)
+        const isInStandaloneMode = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone);
+
+        if (window.innerWidth <= 768 && !isInStandaloneMode) {
+            installButton.style.display = 'inline-block'; // Exibe o botão se for mobile E NÃO estiver em standalone
         } else {
-            installButton.style.display = 'none';
+            installButton.style.display = 'none'; // Oculta o botão caso contrário
         }
     }
 }
@@ -136,4 +139,73 @@ function updateNetworkStatusIndicator() {
 window.addEventListener('online', updateNetworkStatusIndicator);
 window.addEventListener('offline', updateNetworkStatusIndicator);
 
-console.log('Falha ao registrar o ServiceWorker:', err);
+// Função para exibir um prompt de atualização ao usuário
+function promptForUpdate(registration) {
+    const updateModal = document.getElementById('update-modal-overlay');
+    const updateNowButton = document.getElementById('update-now-button');
+    const updateLaterButton = document.getElementById('update-later-button');
+
+    if (!updateModal || !updateNowButton || !updateLaterButton) {
+        console.error('Elementos do modal de atualização não encontrados.');
+        // Fallback para o confirm simples se os elementos não forem encontrados
+        const updateConfirmed = confirm('Uma nova versão do Portal do Aluno está disponível! Deseja atualizar agora?');
+        if (updateConfirmed) {
+            if (registration.waiting) {
+                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            window.location.reload();
+        }
+        return;
+    }
+
+    updateModal.classList.add('active');
+
+    const handleUpdateNow = () => {
+        if (registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        window.location.reload();
+        removeListeners();
+    };
+
+    const handleUpdateLater = () => {
+        updateModal.classList.remove('active');
+        removeListeners();
+    };
+
+    const removeListeners = () => {
+        updateNowButton.removeEventListener('click', handleUpdateNow);
+        updateLaterButton.removeEventListener('click', handleUpdateLater);
+    };
+
+    updateNowButton.addEventListener('click', handleUpdateNow);
+    updateLaterButton.addEventListener('click', handleUpdateLater);
+}
+
+// Modifica o registro do Service Worker para incluir a lógica de atualização
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js?v=3').then(function(registration) {
+      console.log('ServiceWorker registrado com sucesso:', registration.scope);
+
+      // Escutar por atualizações
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // Um novo Service Worker foi instalado e está esperando
+            promptForUpdate(registration);
+          }
+        });
+      });
+
+      // Se já houver um Service Worker em espera (ex: o usuário não aceitou a atualização na primeira vez)
+      if (registration.waiting) {
+        promptForUpdate(registration);
+      }
+
+    }, function(err) {
+      console.log('Falha ao registrar o ServiceWorker:', err);
+    });
+  });
+}
