@@ -1,12 +1,9 @@
 {
   "name": "Portal do Aluno Vicente Rijo",
-  "short_name": "VRijo",
+  "short_name": "Vicente Rijo",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#011423f2",
-  "description": "Portal educacional do Colégio Vicente Rijo",
   "background_color": "#011427",
   "theme_color": "#011423",
   "orientation": "portrait",
