@@ -19,9 +19,9 @@ function showSplashScreen() {
     container.innerHTML = `
         <div class="splash-header">
             <img src="assets/images/logos/logo_escola.png" alt="Logo da Escola" class="splash-logo">
-            <h1 class="splash-title">Semana de provas Vicente Rijo</h1>
+            <h1 class="splash-title">Bem-vindo ao Portal do Aluno Vicente Rijo</h1>
         </div>
-        <p class="splash-message">de 16/06 a 14/06. Aproveite para estudar muito! </p>
+        <p class="splash-message">Acesse as ferramentas educacionais </p>
         <div class="splash-buttons">
             <button class="splash-button primary">Entendi</button>
         </div>
