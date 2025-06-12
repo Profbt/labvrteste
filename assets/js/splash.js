@@ -63,30 +63,5 @@ window.addEventListener('load', () => {
 
 // Inicialização da aplicação
 document.addEventListener('DOMContentLoaded', () => {
-    setupCards();
-});
-
-function setupCards() {
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        // Efeito hover
-        card.addEventListener('mouseenter', () => {
-            card.classList.add('card-hover');
-            card.style.transform = 'translateY(-5px)';
-            card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
-        });
-        card.addEventListener('mouseleave', () => {
-            card.classList.remove('card-hover');
-            card.style.transform = 'translateY(0)';
-            card.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
-        });
-        // Navegação por teclado
-        card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                const link = card.querySelector('a');
-                if (link) link.click();
-            }
-        });
-    });
-} 
+    // A função setupCards agora está em app.js
+}); 
