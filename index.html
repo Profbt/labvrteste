@@ -24,15 +24,6 @@
     <link rel="stylesheet" href="assets/css/style.css?v=3">
     <link rel="stylesheet" href="assets/css/splash.css?v=3" media="print" onload="this.media='all'">
     
-    <!-- Script de tema inline para evitar FOUC -->
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', savedTheme || (prefersDark ? 'dark' : 'light'));
-        })();
-    </script>
-    
     <!-- Carregamento otimizado de scripts -->
     <script src="assets/js/splash.js?v=3" defer></script>
     <script src="assets/js/app.js?v=3" defer></script>

@@ -9,6 +9,14 @@
 
 let deferredPrompt;
 
+// Função para inicializar o tema ao carregar a página
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme, false); // Não salvar no localStorage na inicialização
+}
+
 function updateInstallButtonVisibility() {
     const installButton = document.getElementById('install-button');
     if (installButton) {
@@ -32,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('toggle-theme');
     if (btn) {
         btn.addEventListener('click', toggleTheme);
-        setTheme(document.documentElement.getAttribute('data-theme'));
     }
 
     updateNetworkStatusIndicator();
@@ -51,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     updateInstallButtonVisibility();
+    initializeTheme(); // Chamada para inicializar o tema quando o DOM estiver pronto
 });
 
 window.addEventListener('resize', () => {
@@ -85,27 +93,20 @@ function setupCards() {
     });
 }
 
-function setTheme(theme) {
-    if (theme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        const btn = document.getElementById('toggle-theme');
-        if (btn) {
-            btn.textContent = '☀️';
-        }
-    } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        const btn = document.getElementById('toggle-theme');
-        if (btn) {
-            btn.textContent = '🌙';
-        }
+function setTheme(theme, save = true) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (save) {
+        localStorage.setItem('theme', theme);
+    }
+    const btn = document.getElementById('toggle-theme');
+    if (btn) {
+        btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 }
 
 function toggleTheme() {
-    const current = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    const newTheme = current === 'dark' ? 'light' : 'dark';
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
 }
 
@@ -134,3 +135,5 @@ function updateNetworkStatusIndicator() {
 
 window.addEventListener('online', updateNetworkStatusIndicator);
 window.addEventListener('offline', updateNetworkStatusIndicator);
+
+console.log('Falha ao registrar o ServiceWorker:', err);
