@@ -1,22 +1,6 @@
 // Variável global para controlar o estado da splash screen
 let splashScreenShown = false;
 
-// Função para converter Markdown para HTML (com fallback)
-function convertMarkdownToHtml(text) {
-    try {
-        if (typeof marked !== 'undefined') {
-            return marked.parse(text);
-        }
-        // Fallback: converte apenas quebras de linha e links básicos
-        return text
-            .replace(/\n/g, '<br>')
-            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-    } catch (error) {
-        console.error('Erro ao converter Markdown:', error);
-        return text;
-    }
-}
-
 // Função para mostrar a splash screen
 function showSplashScreen() {
     // Se a splash screen já foi mostrada nesta sessão, não mostra novamente
@@ -43,8 +27,8 @@ function showSplashScreen() {
         return;
     }
 
-    // Converte a mensagem Markdown para HTML
-    const renderedMessage = convertMarkdownToHtml(splashData.message);
+    // Usa a mensagem diretamente, sem conversão Markdown
+    const renderedMessage = splashData.message;
 
     // Remove qualquer splash screen existente
     const existingSplash = document.querySelector('.splash-overlay');
@@ -95,8 +79,8 @@ function resetSplashScreen() {
     splashScreenShown = false;
 }
 
-// Mostrar splash screen apenas quando a página for carregada
-window.addEventListener('load', showSplashScreen);
+// Mostrar splash screen quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', showSplashScreen);
 
 // Resetar splash screen quando a página for atualizada
 window.addEventListener('beforeunload', resetSplashScreen);

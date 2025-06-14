@@ -1,7 +1,7 @@
 // Cache do Service Worker muda versão para atualizar o app.
-const CACHE_NAME = 'portal-aluno-v10';
-const IMAGES_CACHE = 'portal-aluno-images-v10';
-const STATIC_CACHE = 'portal-aluno-static-v10';
+const CACHE_NAME = 'portal-aluno-v11';
+const IMAGES_CACHE = 'portal-aluno-images-v11';
+const STATIC_CACHE = 'portal-aluno-static-v11';
 
 // Lista de recursos para cache (admin.html removido intencionalmente)
 const urlsToCache = [
@@ -165,9 +165,7 @@ self.addEventListener('fetch', event => {
       event.request.url.includes('mblock.cc') ||
       event.request.url.includes('areadoaluno.seed.pr.gov.br') ||
       event.request.url.includes('sites.google.com') ||
-      event.request.url.includes('sora.chatgpt.com') ||
-      event.request.url.includes('cdn.jsdelivr.net') ||
-      event.request.url.includes('drive.google.com')) {
+      event.request.url.includes('sora.chatgpt.com')) {
     return event.respondWith(fetch(event.request));
   }
 
