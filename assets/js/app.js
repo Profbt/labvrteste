@@ -185,7 +185,7 @@ function promptForUpdate(registration) {
 // Modifica o registro do Service Worker para incluir a lógica de atualização
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js?v=3').then(function(registration) {
+    navigator.serviceWorker.register('sw.js?v=7').then(function(registration) {
       console.log('ServiceWorker registrado com sucesso:', registration.scope);
 
       // Escutar por atualizações
@@ -203,6 +203,11 @@ if ('serviceWorker' in navigator) {
       if (registration.waiting) {
         promptForUpdate(registration);
       }
+
+      // Verificar periodicamente por atualizações
+      setInterval(() => {
+        registration.update();
+      }, 1000 * 60 * 60); // Verifica a cada hora
 
     }, function(err) {
       console.log('Falha ao registrar o ServiceWorker:', err);

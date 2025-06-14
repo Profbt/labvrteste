@@ -108,6 +108,18 @@
                         <h3 class="card-title">Alura EduTech</h3>
                         <a href="https://cursos.alura.com.br/edutech" target="_blank" class="card-link"></a>
                     </div>
+                    <!-- Scratch -->
+                    <div class="card" data-platform="Scratch">
+                        <img src="/assets/images/logos/scratch.png" alt="Scratch" class="card-logo" width="48" height="48" loading="lazy">
+                        <h3 class="card-title">Scratch</h3>
+                        <a href="https://scratch.mit.edu/" target="_blank" class="card-link"></a>
+                    </div>
+                    <!-- GitHub -->
+                    <div class="card" data-platform="GitHub">
+                        <img src="/assets/images/logos/github.png" alt="GitHub" class="card-logo" width="48" height="48" loading="lazy">
+                        <h3 class="card-title">GitHub</h3>
+                        <a href="https://github.com/login" target="_blank" class="card-link"></a>
+                    </div>
                     <!-- Mblock -->
                     <div class="card" data-platform="Mblock">
                         <img src="/assets/images/logos/mblock.png" alt="Mblock ide" class="card-logo" width="48" height="48" loading="lazy">
@@ -144,7 +156,7 @@
     <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js?v=3').then(function(registration) {
+        navigator.serviceWorker.register('sw.js?v=7').then(function(registration) {
           console.log('ServiceWorker registrado com sucesso:', registration.scope);
         }, function(err) {
           console.log('Falha ao registrar o ServiceWorker:', err);

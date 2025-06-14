@@ -1,6 +1,6 @@
 {
     "name": "Portal do Aluno Vicente Rijo",
-    "short_name": "Vicente Rijo",
+    "short_name": "AlunoVR",
     "start_url": "/?utm_source=pwa",
     "display": "standalone",
     "background_color": "#FFFFFF",

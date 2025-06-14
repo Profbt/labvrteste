@@ -598,6 +598,9 @@ h1 {
 .footer p a {
     color: var(--white) !important;
     text-decoration: none;
+    position: relative;
+    padding: 0 2px;
+    transition: all 0.3s ease;
 }
 
 .footer p a:visited {
@@ -605,7 +608,35 @@ h1 {
 }
 
 .footer p a:hover {
-    text-decoration: underline;
+    color: var(--pr-blue) !important;
+    transform: translateY(-2px);
+}
+
+.footer p a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--pr-blue);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.footer p a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Dark mode para o link do rodapé */
+[data-theme="dark"] .footer p a:hover {
+    color: var(--yelow_vr) !important;
+}
+
+[data-theme="dark"] .footer p a::after {
+    background-color: var(--yelow_vr);
 }
 
 /* Estilos para o indicador de status da rede */
