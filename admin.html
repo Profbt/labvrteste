@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="theme-color" content="#011423f2">
+    <title>Admin - Portal do Aluno Vicente Rijo</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-main">
+                <img src="assets/images/logos/logo.png" alt="Logo do Colégio Vicente Rijo" class="logo">
+                <div class="header-title-group">
+                    <h1>Portal do Aluno</h1>
+                    <span class="school-name">Vicente Rijo</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="login-container" class="login-container">
+                <h2>Login Administrativo</h2>
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="username">Usuário</label>
+                        <input type="text" id="username" placeholder="Digite seu usuário" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" placeholder="Digite sua senha" required>
+                    </div>
+                    <div id="error-message" class="error-message"></div>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+            </div>
+
+            <div id="admin-container" class="admin-container" style="display: none;">
+                <div class="admin-header">
+                    <h2 class="admin-title">Painel Administrativo</h2>
+                    <button id="logout-button" class="logout-button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Sair
+                    </button>
+                </div>
+                <form id="admin-form" class="admin-form">
+                    <div class="form-group">
+                        <label for="splash-title">Título da Splash Screen</label>
+                        <input type="text" id="splash-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="splash-message">Mensagem da Splash Screen</label>
+                        <textarea id="splash-message" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="splash-button-text">Texto do Botão</label>
+                        <input type="text" id="splash-button-text" required>
+                    </div>
+                    <div class="toggle-container">
+                        <label for="splash-enabled" class="toggle-label">Ativar Splash Screen</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="splash-enabled" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 &bull; feito com <span class="heart">❤</span> <a href="http://profbt.vercel.app" target="_blank" rel="noopener">Prof Bruno Carvalho</a></p>
+            <p class="footer-copy">Colégio Vicente Rijo. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <div id="session-timeout" class="session-timeout">
+        Sua sessão expirou por inatividade. Você será redirecionado em <span id="timeout-countdown">30</span> segundos.
+    </div>
+
+    <!-- Mensagem de Notificação -->
+    <div id="notification-message" class="notification-message"></div>
+
+    <script>
+        // Função de hash simples para as credenciais
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        // Hash das credenciais (em produção, isso deve estar em um backend seguro)
+        const validCredentials = {
+            username: simpleHash('admin_vr'),
+            password: simpleHash('Vic3nt3R1j02025')
+        };
+
+        // Função para verificar credenciais
+        function verifyCredentials(username, password) {
+            return simpleHash(username) === validCredentials.username &&
+                   simpleHash(password) === validCredentials.password;
+        }
+
+        // Função para proteger contra DevTools
+        function protectDevTools() {
+            let devToolsOpen = false;
+            
+            function checkDevTools() {
+                const threshold = 160;
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                
+                if (widthThreshold || heightThreshold) {
+                    if (!devToolsOpen) {
+                        devToolsOpen = true;
+                        secureLogout();
+                    }
+                } else {
+                    devToolsOpen = false;
+                }
+            }
+
+            setInterval(checkDevTools, 1000);
+
+            document.addEventListener('keydown', function(e) {
+                if (
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                    (e.key === 'F12')
+                ) {
+                    e.preventDefault();
+                    secureLogout();
+                }
+            });
+        }
+
+        // Função para exibir notificações
+        function displayNotification(message, type = 'success') {
+            const notification = document.getElementById('notification-message');
+            notification.textContent = message;
+            notification.className = `notification-message show ${type}`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Função para salvar alterações
+        function saveChanges(event) {
+            event.preventDefault();
+            
+            const splashTitle = document.getElementById('splash-title').value;
+            const splashMessage = document.getElementById('splash-message').value;
+            const splashButtonText = document.getElementById('splash-button-text').value;
+            const splashEnabled = document.getElementById('splash-enabled').checked;
+
+            const splashData = {
+                title: splashTitle,
+                message: splashMessage,
+                buttonText: splashButtonText,
+                enabled: splashEnabled
+            };
+            localStorage.setItem('splashData', JSON.stringify(splashData));
+
+            displayNotification('Alterações salvas com sucesso!', 'success');
+        }
+
+        // Função para carregar dados salvos
+        function loadSavedData() {
+            const splashData = JSON.parse(localStorage.getItem('splashData')) || {
+                title: 'Bem-vindo ao Portal do Aluno',
+                message: 'Acesse todas as plataformas educacionais em um só lugar.',
+                buttonText: 'Entrar',
+                enabled: true
+            };
+
+            document.getElementById('splash-title').value = splashData.title;
+            document.getElementById('splash-message').value = splashData.message;
+            document.getElementById('splash-button-text').value = splashData.buttonText;
+            document.getElementById('splash-enabled').checked = splashData.enabled;
+
+            const splashEnabledToggle = document.getElementById('splash-enabled');
+            const toggleSlider = splashEnabledToggle.nextElementSibling;
+
+            function updateToggleColor() {
+                if (splashEnabledToggle.checked) {
+                    toggleSlider.style.backgroundColor = 'var(--pr-green)';
+                } else {
+                    toggleSlider.style.backgroundColor = 'var(--danger-color)';
+                }
+            }
+            updateToggleColor();
+            splashEnabledToggle.addEventListener('change', updateToggleColor);
+        }
+
+        // Função para logout seguro
+        function secureLogout() {
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('lastActivity');
+            sessionStorage.clear();
+
+            document.cookie.split(";").forEach(function(c) {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+
+            window.location.href = 'index.html';
+        }
+
+        // Gerenciamento de sessão
+        let sessionTimeout;
+        const SESSION_DURATION = 30 * 60 * 1000; // 30 minutos
+        const WARNING_DURATION = 30; // 30 segundos de aviso
+
+        function resetSessionTimer() {
+            clearTimeout(sessionTimeout);
+            sessionStorage.setItem('lastActivity', Date.now().toString());
+            
+            sessionTimeout = setTimeout(() => {
+                const timeoutWarning = document.getElementById('session-timeout');
+                const countdown = document.getElementById('timeout-countdown');
+                let timeLeft = WARNING_DURATION;
+                
+                timeoutWarning.classList.add('show');
+                
+                const countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    countdown.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        secureLogout();
+                    }
+                }, 1000);
+            }, SESSION_DURATION);
+        }
+
+        function checkSession() {
+            const lastActivity = sessionStorage.getItem('lastActivity');
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                if (lastActivity) {
+                    const inactiveTime = Date.now() - parseInt(lastActivity);
+                    if (inactiveTime >= SESSION_DURATION) {
+                        secureLogout();
+                    } else {
+                        resetSessionTimer();
+                    }
+                } else {
+                    // Se isLoggedIn é true, mas lastActivity sumiu, significa que a sessão está inconsistente. Desloga.
+                    secureLogout();
+                }
+            } else {
+                // Se não está logado, garante que a tela de login seja exibida
+                const loginContainer = document.getElementById('login-container');
+                const adminContainer = document.getElementById('admin-container');
+                if (loginContainer && adminContainer) {
+                    loginContainer.style.display = 'block';
+                    adminContainer.style.display = 'none';
+                }
+            }
+        }
+
+        // Event Listeners para atividade do usuário
+        ['click', 'keypress', 'scroll', 'mousemove'].forEach(event => {
+            document.addEventListener(event, resetSessionTimer);
+        });
+
+        // Verifica sessão a cada minuto
+        setInterval(checkSession, 60000);
+
+        // Initial page load logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const loginContainer = document.getElementById('login-container');
+            const adminContainer = document.getElementById('admin-container');
+            const loginForm = document.getElementById('login-form');
+            const errorMessage = document.getElementById('error-message');
+            const logoutButton = document.getElementById('logout-button');
+
+            if (isLoggedIn === 'true') {
+                loginContainer.style.display = 'none';
+                adminContainer.style.display = 'block';
+                loadSavedData();
+                resetSessionTimer();
+                protectDevTools(); // Proteção DevTools deve ser ativada apenas se logado
+            } else {
+                loginContainer.style.display = 'block';
+                adminContainer.style.display = 'none';
+            }
+
+            // Login Form Submission
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                if (verifyCredentials(username, password)) {
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    // Define lastActivity imediatamente após o login bem-sucedido
+                    sessionStorage.setItem('lastActivity', Date.now().toString());
+                    loginContainer.style.display = 'none';
+                    adminContainer.style.display = 'block';
+                    errorMessage.classList.remove('show');
+                    loadSavedData();
+                    resetSessionTimer();
+                    protectDevTools(); // Ativa a proteção após o login
+                } else {
+                    errorMessage.textContent = 'Usuário ou senha inválidos.';
+                    errorMessage.classList.add('show');
+                }
+            });
+
+            // Logout button event listener
+            logoutButton.addEventListener('click', secureLogout);
+
+            // Adicionar event listener para o formulário de administração
+            document.getElementById('admin-form').addEventListener('submit', saveChanges);
+        });
+
+        // Proteções adicionais
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+</body>
+</html> 

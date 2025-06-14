@@ -15,18 +15,14 @@
     <link rel="apple-touch-icon" href="assets/images/icons/icon-192x192.png">
     <link rel="icon" href="assets/images/icons/icon-192x192.png">
     
-    <!-- Preload de recursos críticos -->
-    <link rel="preload" href="assets/css/style.css" as="style">
-    <link rel="preload" href="assets/js/app.js" as="script">
-    <link rel="preload" href="assets/images/logos/logo.png" as="image">
-    
     <!-- Carregamento otimizado de CSS -->
-    <link rel="stylesheet" href="assets/css/style.css?v=3">
-    <link rel="stylesheet" href="assets/css/splash.css?v=3" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="assets/css/style.css?v=7">
+    <link rel="stylesheet" href="assets/css/splash.css?v=7">
     
     <!-- Carregamento otimizado de scripts -->
-    <script src="assets/js/splash.js?v=3" defer></script>
-    <script src="assets/js/app.js?v=3" defer></script>
+    <script src="assets/js/marked.min.js?v=7"></script>
+    <script src="assets/js/splash.js?v=7" defer></script>
+    <script src="assets/js/app.js?v=7" defer></script>
 </head>
 
 <body>
@@ -152,19 +148,6 @@
     <!-- Botão de status online/offline -->
     <button id="network-status-indicator" aria-label="Status da rede">Status</button>
     
-    <!-- Registro do Service Worker -->
-    <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js?v=7').then(function(registration) {
-          console.log('ServiceWorker registrado com sucesso:', registration.scope);
-        }, function(err) {
-          console.log('Falha ao registrar o ServiceWorker:', err);
-        });
-      });
-    }
-    </script>
-
     <!-- Modal de Atualização de PWA -->
     <div id="update-modal-overlay" class="update-modal-overlay">
         <div class="update-modal-container">

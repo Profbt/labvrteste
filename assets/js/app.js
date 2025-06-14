@@ -22,8 +22,11 @@ function updateInstallButtonVisibility() {
     if (installButton) {
         // Verifica se está em modo standalone (PWA instalado)
         const isInStandaloneMode = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone);
+        
+        // Verifica se é um dispositivo móvel
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
-        if (window.innerWidth <= 768 && !isInStandaloneMode) {
+        if (isMobile && !isInStandaloneMode) {
             installButton.style.display = 'inline-block'; // Exibe o botão se for mobile E NÃO estiver em standalone
         } else {
             installButton.style.display = 'none'; // Oculta o botão caso contrário
@@ -31,10 +34,39 @@ function updateInstallButtonVisibility() {
     }
 }
 
+// Função para mostrar o banner de instalação
+function showInstallBanner() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('Usuário aceitou a instalação');
+            } else {
+                console.log('Usuário recusou a instalação');
+            }
+            deferredPrompt = null;
+        });
+    }
+}
+
+// Listener para o evento beforeinstallprompt
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    updateInstallButtonVisibility();
+    
+    // Mostra o botão de instalação apenas em dispositivos móveis e se a PWA ainda não estiver instalada
+    const installButton = document.getElementById('install-button');
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    const isInStandaloneMode = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone);
+
+    if (installButton && isMobile && !isInStandaloneMode) {
+        installButton.style.display = 'inline-block'; // Altera para inline-block para melhor compatibilidade com flex/grid
+        // Remove o event listener duplicado para evitar múltiplos prompts ou comportamentos inesperados
+        installButton.removeEventListener('click', showInstallBanner); // Remove o antigo
+        installButton.addEventListener('click', showInstallBanner); // Adiciona o correto
+    } else {
+        installButton.style.display = 'none';
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -47,19 +79,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateNetworkStatusIndicator();
 
-    const installButton = document.getElementById('install-button');
-    if (installButton) {
-        installButton.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                installButton.style.display = 'none';
-            } else {
-                installButton.style.display = 'none';
-            }
-        });
-    }
+    // Removendo o listener duplicado para o botão de instalação aqui, pois já é tratado no beforeinstallprompt
+    // const installButton = document.getElementById('install-button');
+    // if (installButton) {
+    //     installButton.addEventListener('click', async () => {
+    //         if (deferredPrompt) {
+    //             deferredPrompt.prompt();
+    //             const { outcome } = await deferredPrompt.userChoice;
+    //             deferredPrompt = null;
+    //             installButton.style.display = 'none';
+    //         } else {
+    //             installButton.style.display = 'none';
+    //         }
+    //     });
+    // }
+
+    // A chamada a updateInstallButtonVisibility já está presente e é importante.
     updateInstallButtonVisibility();
     initializeTheme(); // Chamada para inicializar o tema quando o DOM estiver pronto
 });
@@ -182,35 +217,54 @@ function promptForUpdate(registration) {
     updateLaterButton.addEventListener('click', handleUpdateLater);
 }
 
-// Modifica o registro do Service Worker para incluir a lógica de atualização
+// Registro do Service Worker
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js?v=7').then(function(registration) {
-      console.log('ServiceWorker registrado com sucesso:', registration.scope);
+    window.addEventListener('load', function() {
+        // Verifica se já existe um Service Worker registrado
+        if (navigator.serviceWorker.controller) {
+            console.log('Service Worker já está ativo');
+            return;
+        }
 
-      // Escutar por atualizações
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Um novo Service Worker foi instalado e está esperando
-            promptForUpdate(registration);
-          }
+        navigator.serviceWorker.register('sw.js?v=7').then(function(registration) {
+            console.log('ServiceWorker registrado com sucesso:', registration.scope);
+
+            // Escutar por atualizações
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // Verifica se houve mudanças reais no Service Worker
+                        const currentVersion = localStorage.getItem('swVersion');
+                        const newVersion = 'v7'; // Versão atual do Service Worker
+
+                        if (currentVersion !== newVersion) {
+                            // Só mostra o prompt se for uma nova versão
+                            promptForUpdate(registration);
+                            localStorage.setItem('swVersion', newVersion);
+                        }
+                    }
+                });
+            });
+
+            // Se já houver um Service Worker em espera
+            if (registration.waiting) {
+                const currentVersion = localStorage.getItem('swVersion');
+                const newVersion = 'v7';
+
+                if (currentVersion !== newVersion) {
+                    promptForUpdate(registration);
+                    localStorage.setItem('swVersion', newVersion);
+                }
+            }
+
+            // Verificar periodicamente por atualizações
+            setInterval(() => {
+                registration.update();
+            }, 1000 * 60 * 60); // Verifica a cada hora
+
+        }, function(err) {
+            console.log('Falha ao registrar o ServiceWorker:', err);
         });
-      });
-
-      // Se já houver um Service Worker em espera (ex: o usuário não aceitou a atualização na primeira vez)
-      if (registration.waiting) {
-        promptForUpdate(registration);
-      }
-
-      // Verificar periodicamente por atualizações
-      setInterval(() => {
-        registration.update();
-      }, 1000 * 60 * 60); // Verifica a cada hora
-
-    }, function(err) {
-      console.log('Falha ao registrar o ServiceWorker:', err);
     });
-  });
 }
